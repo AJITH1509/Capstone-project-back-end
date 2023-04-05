@@ -38,6 +38,28 @@ router.get("/:id", async function (request, response) {
     : response.status(404).send({ message: "user not found" });
 });
 
+router.put("/:id", async function (request, response) {
+  const { id } = request.params;
+  let count = 0;
+
+  const color = await client
+    .db("b42wd2")
+    .collection("colors")
+    .findOne({ _id: new ObjectId(id) });
+
+  if (color.count) {
+    count = color.count;
+  }
+  const updated = {
+    count: count + 1,
+  };
+  const update_count = await client
+    .db("b42wd2")
+    .collection("colors")
+    .updateOne({ _id: new ObjectId(id) }, { $set: updated });
+  response.send({ message: "like added" });
+});
+
 // app.post("/post", async function (request, response) {
 //   const data = request.body;
 //   console.log(request.body);
