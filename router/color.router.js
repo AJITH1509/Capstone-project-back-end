@@ -60,7 +60,21 @@ router.put("/:id", async function (request, response) {
   response.send({ message: "like added" });
 });
 
-// app.post("/post", async function (request, response) {
+router.get("/search/color/:name", async function (req, res) {
+  try {
+    const { a, b, name } = req.params;
+    const result = await client
+      .db("b42wd2")
+      .collection("colors")
+      .find({ name: new RegExp(name, "i") })
+      .toArray();
+    res.status(200).send(result);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+// router.post("/post", async function (request, response) {
 //   const data = request.body;
 //   console.log(request.body);
 //   const result = await client
