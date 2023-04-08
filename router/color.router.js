@@ -14,28 +14,36 @@ router.get("/colors", auth, async (req, res) => {
     const colors = await getAllColors();
     res.status(200).send(colors);
   } catch (e) {
-    console.log(e);
+    res.status(401).send({ message: err });
   }
 });
 
 router.get("/:mood/:tone", auth, async function (req, res) {
   const { mood, tone } = req.params;
-  if (!mood && !tone) {
-    res.status(401).send("please select mood and tone");
+  try {
+    if (!mood && !tone) {
+      res.status(401).send("please select mood and tone");
+    }
+    const data = await getColor(mood, tone);
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(401).send({ message: err });
   }
-  const data = await getColor(mood, tone);
-  res.status(200).send(data);
 });
 
-router.get("/:id", async function (request, response) {
+router.get("/:id", auth, async function (request, response) {
   const { id } = request.params;
-  const user = await client
-    .db("b42wd2")
-    .collection("users")
-    .findOne({ _id: new ObjectId(id) });
-  user
-    ? response.status(200).send(user)
-    : response.status(404).send({ message: "user not found" });
+  try {
+    const user = await client
+      .db("b42wd2")
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
+    user
+      ? response.status(200).send(user)
+      : response.status(404).send({ message: "user not found" });
+  } catch (err) {
+    res.status(401).send({ message: err });
+  }
 });
 
 router.put("/:id", async function (request, response) {
@@ -60,7 +68,7 @@ router.put("/:id", async function (request, response) {
   response.send({ message: "like added" });
 });
 
-router.get("/search/color/:name", async function (req, res) {
+router.get("/search/color/:name", auth, async function (req, res) {
   try {
     const { a, b, name } = req.params;
     const result = await client
@@ -70,7 +78,7 @@ router.get("/search/color/:name", async function (req, res) {
       .toArray();
     res.status(200).send(result);
   } catch (err) {
-    res.send(err);
+    res.status(401).send(err);
   }
 });
 
