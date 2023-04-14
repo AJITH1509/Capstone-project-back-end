@@ -1,4 +1,5 @@
 import { client } from "../index.js";
+import { ObjectId } from "mongodb";
 
 export async function updatePassword(email, hashedPassword) {
   const updated = {
@@ -38,4 +39,10 @@ export async function deleteOtp(otp) {
     .db("b42wd2")
     .collection("users")
     .updateOne({ OTP: otp }, { $unset: data });
+}
+export async function updateName(id, Updated) {
+  return await client
+    .db("b42wd2")
+    .collection("users")
+    .updateOne({ _id: new ObjectId(id) }, { $set: Updated });
 }

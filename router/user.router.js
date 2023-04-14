@@ -14,6 +14,7 @@ import {
   getOtp,
   deleteOtp,
   updatePassword,
+  updateName,
 } from "../services/user.service.js";
 
 // function for hashing password
@@ -125,6 +126,20 @@ router.post("/setpassword", express.json(), async function (request, response) {
     }
   } catch (err) {
     console.log(err);
+  }
+});
+router.put("/editprofile/:id", async function (req, res) {
+  const { id } = req.params;
+  const { name } = req.body;
+  console.log(name, id);
+  try {
+    const Updated = {
+      name: name,
+    };
+    const update = await updateName(id, Updated);
+    res.status(200).send({ message: "updated successfully" });
+  } catch (err) {
+    res.send({ message: err });
   }
 });
 
